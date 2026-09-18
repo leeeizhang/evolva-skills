@@ -55,7 +55,9 @@ def add_set_storage_command(settings: argparse._SubParsersAction) -> None:
 
 def add_set_agent_command(settings: argparse._SubParsersAction) -> None:
     """evolva set agent <target> --enable|--disable"""
-    parser = settings.add_parser("agent", help="Enable or disable an agent integration.")
+    parser = settings.add_parser(
+        "agent", help="Enable or disable an agent integration."
+    )
     parser.add_argument("target", help="Agent integration, e.g. codex or claude.")
     action = parser.add_mutually_exclusive_group(required=True)
     action.add_argument("--enable", action="store_true", help="Enable the agent.")

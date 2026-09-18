@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from functools import wraps
 from pathlib import Path
-from typing import Annotated, Any, Callable
+from typing import Annotated, Any
 
-from mcp.server.mcpserver.exceptions import ToolError
 from mcp.server.mcpserver import MCPServer as SDKServer
+from mcp.server.mcpserver.exceptions import ToolError
 from mcp.types import ToolAnnotations
 from pydantic import Field
 

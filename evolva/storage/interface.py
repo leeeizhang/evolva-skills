@@ -61,9 +61,7 @@ _STORAGE_REGISTRY: dict[str, type[Storage]] = {}
 def register_storage(storage_cls: type[Storage]) -> type[Storage]:
     """Register a Storage implementation."""
     if storage_cls.type in _STORAGE_REGISTRY:
-        raise ValueError(
-            f"Storage already registered: {storage_cls.type}"
-        )
+        raise ValueError(f"Storage already registered: {storage_cls.type}")
 
     _STORAGE_REGISTRY[storage_cls.type] = storage_cls
     return storage_cls

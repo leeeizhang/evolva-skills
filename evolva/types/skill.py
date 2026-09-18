@@ -39,8 +39,10 @@ class Skill:
             raise ValueError(f"{SKILL_FILE} must start with '---' frontmatter")
 
         values: dict[str, str] = {}
+        close_index: int | None = None
         for index, line in enumerate(lines[1:], start=1):
             if line.strip() == "---":
+                close_index = index
                 break
             if line.startswith((" ", "\t")):
                 continue
@@ -48,13 +50,14 @@ class Skill:
             key, separator, value = line.partition(":")
             if separator:
                 values[key.strip()] = value.strip().strip("\"'")
-        else:
+
+        if close_index is None:
             raise ValueError(f"{SKILL_FILE} frontmatter is not closed by '---'")
 
         if not values.get("description"):
             raise ValueError(f"{SKILL_FILE} frontmatter requires 'description'")
 
-        return values, "\n".join(lines[index + 1 :])
+        return values, "\n".join(lines[close_index + 1 :])
 
     def to_dict(self) -> dict[str, str]:
         """Serialize for skill listings and MCP output."""

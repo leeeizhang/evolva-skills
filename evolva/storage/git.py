@@ -79,7 +79,9 @@ class GitStorage(Storage):
         try:
             self._sync()
         except RuntimeError as error:
-            warnings.warn(f"Sync failed, listing local skills only: {error}", stacklevel=2)
+            warnings.warn(
+                f"Sync failed, listing local skills only: {error}", stacklevel=2
+            )
 
         skills = []
         for entry in sorted(self.path.iterdir()):
@@ -97,7 +99,9 @@ class GitStorage(Storage):
         try:
             self._sync()
         except RuntimeError as error:
-            warnings.warn(f"Sync failed, searching local skills only: {error}", stacklevel=2)
+            warnings.warn(
+                f"Sync failed, searching local skills only: {error}", stacklevel=2
+            )
 
         matches = []
         for entry in sorted(self.path.iterdir()):
@@ -120,7 +124,9 @@ class GitStorage(Storage):
         try:
             self._sync()
         except RuntimeError as error:
-            warnings.warn(f"Sync failed, reading the local skill only: {error}", stacklevel=2)
+            warnings.warn(
+                f"Sync failed, reading the local skill only: {error}", stacklevel=2
+            )
 
         source = self.path / skill_name
         if not (source / SKILL_FILE).is_file():
@@ -137,7 +143,11 @@ class GitStorage(Storage):
             raise ValueError(f"Skill directory must contain {SKILL_FILE}: {source}")
 
         target = self.path / skill_name
-        if not skill_name or Path(skill_name).name != skill_name or skill_name in {".", ".."}:
+        if (
+            not skill_name
+            or Path(skill_name).name != skill_name
+            or skill_name in {".", ".."}
+        ):
             raise ValueError(f"Invalid skill name: {skill_name!r}")
 
         Skill.from_dir(source)
@@ -145,7 +155,9 @@ class GitStorage(Storage):
         try:
             self._sync()
         except RuntimeError as error:
-            warnings.warn(f"Sync failed, upserting on the local state: {error}", stacklevel=2)
+            warnings.warn(
+                f"Sync failed, upserting on the local state: {error}", stacklevel=2
+            )
 
         relative = target.relative_to(self.path).as_posix()
         previous = self._git("rev-parse", "--verify", "HEAD").stdout.strip()
@@ -183,13 +195,19 @@ class GitStorage(Storage):
 
     def delete_skill(self, skill_name: str, message: str) -> None:
         target = self.path / skill_name
-        if not skill_name or Path(skill_name).name != skill_name or skill_name in {".", ".."}:
+        if (
+            not skill_name
+            or Path(skill_name).name != skill_name
+            or skill_name in {".", ".."}
+        ):
             raise ValueError(f"Invalid skill name: {skill_name!r}")
 
         try:
             self._sync()
         except RuntimeError as error:
-            warnings.warn(f"Sync failed, deleting on the local state: {error}", stacklevel=2)
+            warnings.warn(
+                f"Sync failed, deleting on the local state: {error}", stacklevel=2
+            )
 
         if not (target / SKILL_FILE).is_file():
             raise ValueError(f"Unknown skill: {skill_name}")
@@ -227,7 +245,7 @@ class GitStorage(Storage):
 
     @staticmethod
     def _storage_key(url: str, branch: str) -> str:
-        digest = hashlib.sha256(f"{url}\n{branch}".encode("utf-8")).hexdigest()
+        digest = hashlib.sha256(f"{url}\n{branch}".encode()).hexdigest()
         return digest[:12]
 
     def _sync(self) -> None:
@@ -260,8 +278,6 @@ class GitStorage(Storage):
             ) from error
 
         if result.returncode != 0:
-            raise RuntimeError(
-                f"git {' '.join(args)} failed:\n{result.stderr.strip()}"
-            )
+            raise RuntimeError(f"git {' '.join(args)} failed:\n{result.stderr.strip()}")
 
         return result
