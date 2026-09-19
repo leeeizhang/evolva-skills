@@ -12,6 +12,45 @@ from pydantic import Field
 
 from evolva.storage.interface import Storage
 
+MAX_NAMES = 20
+
+
+def build_instructions(storage: Storage) -> str:
+    return "\n".join(
+        [
+            "Evolva is shared memory for agents: the entry point to dynamic "
+            "Skills that are not loaded into agent-installed skill hubs.",
+            "Start every task by listing what Evolva Skills exist and may help; "
+            "search it when you lack knowledge or experience, when something "
+            "fails, or before solving from scratch.",
+            f"Skills: {_names(storage)}",
+            "Tools: list_skills (start here), search_skills, read_skill, "
+            "upsert_skill, delete_skill.",
+            "If you learn something reusable — a hard-won fix, an unexpected "
+            "constraint, a workflow that worked — publish it with upsert_skill "
+            "so the next agent does not rediscover it.",
+        ]
+    )
+
+
+def _names(storage: Storage) -> str:
+    """List Skill names, never failing the handshake over them.
+
+    `list_skills` is named even when every Skill fits: it keeps the full catalog
+    one call away, which is what makes the shipped names a starting point rather
+    than the whole picture.
+    """
+    try:
+        names = [str(skill.get("name", "?")) for skill in storage.list_skills()]
+    except (OSError, RuntimeError, ValueError) as error:
+        return f"unavailable ({error}); call list_skills to retry"
+
+    if not names:
+        return "none published yet, use upsert_skill to add the first one"
+
+    shown = ", ".join(names[:MAX_NAMES])
+    return f"{shown}, and more: list_skills has the full catalog"
+
 
 def _handle_errors(tool: Callable[..., Any]) -> Callable[..., Any]:
     @wraps(tool)
@@ -31,11 +70,7 @@ class MCPServer:
         self.storage = storage
         self.server = SDKServer(
             "evolva",
-            instructions=(
-                "Evolva is a shared Skill and memory layer for agents. "
-                "Reuse relevant Skills before meaningful work, and publish "
-                "reusable knowledge after learning it."
-            ),
+            instructions=build_instructions(storage),
         )
 
         self._register_tools()
