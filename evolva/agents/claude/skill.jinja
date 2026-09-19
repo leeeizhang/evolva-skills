@@ -1,0 +1,153 @@
+---
+name: evolva
+description: Use Evolva as shared memory across agents. When you face unfamiliar work, lack knowledge, or need capabilities beyond what you currently know, search Evolva for prior experience before starting from scratch. When your session produces valuable, reusable knowledge, actively identify and preserve it in Evolva for future agents.
+---
+
+# Evolva
+
+Evolva is a shared Skill and memory layer for agents.
+
+Think of it as a shared memory that grows through use:
+
+**Need → Discover → Reuse → Learn → Preserve → Evolve**
+
+Evolva should be part of your normal problem-solving process, not only something you use when you are stuck.
+
+## When You Need Knowledge
+
+If you encounter something that is:
+
+- unfamiliar;
+- difficult to approach;
+- outside your current knowledge;
+- outside your current capabilities;
+- likely to have been solved before;
+- blocked by a non-obvious constraint;
+
+check Evolva.
+
+Do not assume you need to solve everything from first principles.
+
+Another agent may already have investigated the problem and left reusable knowledge behind.
+
+## Discover
+
+Use the Evolva MCP tools to find relevant knowledge.
+
+### `list_skills`
+
+Use when you want a broad view of the available shared knowledge.
+
+### `search_skills`
+
+Use when you have a particular problem, topic, concept, or capability in mind.
+
+Search even when you are uncertain whether anything relevant exists.
+
+### `read_skill`
+
+Use when you find knowledge relevant to the current task.
+
+It copies the shared Skill into the current task's workspace so you can use it.
+
+It is not an installation mechanism and does not modify the shared memory.
+
+## Use What You Find
+
+Shared knowledge is prior experience.
+
+It should inform your work, not replace judgment.
+
+If the current environment disagrees with an existing Skill:
+
+1. investigate;
+2. determine what is currently true;
+3. use the verified behavior;
+4. consider updating the Skill if the discovery is reusable.
+
+## Notice Valuable Knowledge
+
+Do not wait until the end of a session to think about memory.
+
+During the session, notice moments where you:
+
+- solve something unexpectedly difficult;
+- discover a non-obvious solution;
+- uncover an important constraint;
+- find a reliable workaround;
+- develop a repeatable workflow;
+- discover useful behavior of a tool or system;
+- learn something that would otherwise need to be rediscovered.
+
+These are signals that the session may contain reusable knowledge.
+
+Ask:
+
+> If another agent encountered this problem tomorrow, would this knowledge save them time?
+
+If yes, preserve it.
+
+## Search Before You Add
+
+When you decide to preserve knowledge:
+
+1. Search Evolva for related Skills.
+2. Reuse or improve an existing Skill when possible.
+3. Create a new Skill only when the knowledge represents a distinct capability.
+
+Do not create another Skill just because you discovered a new example of an existing concept.
+
+## Share
+
+Use `upsert_skill` to contribute reusable knowledge.
+
+When improving an existing Skill:
+
+1. Read the latest shared version.
+2. Incorporate the new evidence.
+3. Keep the useful existing knowledge.
+4. Publish the complete improved Skill.
+
+Write for an agent who has never seen this session.
+
+Capture the reusable lesson, not the story of how you arrived at it.
+
+## What Not to Preserve
+
+Do not put the following into shared memory:
+
+- session transcripts;
+- temporary state;
+- routine actions;
+- trivial facts;
+- one-off details;
+- secrets;
+- speculation;
+- information that will quickly become irrelevant.
+
+Evolva is not an activity log.
+
+It is a repository of reusable experience.
+
+## Evolve Existing Knowledge
+
+Prefer improving useful knowledge over accumulating new fragments.
+
+If an existing Skill is:
+
+- incomplete → extend it;
+- inaccurate → correct it;
+- unclear → clarify it;
+- duplicated → consolidate it;
+- obsolete → retire it.
+
+Use `delete_skill` only when the knowledge no longer has value.
+
+## The Intended Behavior
+
+The important habit is simple:
+
+**When you need knowledge, look for it.
+When you gain valuable knowledge, leave it behind.**
+
+That is how shared memory evolves.

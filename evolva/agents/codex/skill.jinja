@@ -1,0 +1,145 @@
+---
+name: evolva
+description: Use Evolva as shared memory across agents. Search it when you encounter unfamiliar problems, missing knowledge, or work beyond your current capabilities; reuse relevant Skills before solving from scratch. When a session produces reliable, reusable knowledge, preserve it in Evolva so future agents can benefit from it.
+---
+
+# Evolva
+
+Evolva is a shared Skill and memory layer for agents.
+
+It exists for two complementary purposes:
+
+1. **Retrieve knowledge** when you need knowledge you do not currently have.
+2. **Preserve knowledge** when your work produces something worth reusing.
+
+The goal is not to record everything you do. The goal is to make accumulated experience available to future work.
+
+## Use Evolva Proactively
+
+Do not wait until you are completely stuck.
+
+Consider Evolva when:
+
+- you encounter an unfamiliar problem;
+- you do not know how to approach something;
+- the current task exceeds your existing knowledge or capabilities;
+- you suspect another agent may have solved a similar problem;
+- you encounter a non-obvious constraint or failure mode;
+- you discover a useful technique or workflow.
+
+When prior knowledge may help, search Evolva before solving the problem from scratch.
+
+## Retrieve Shared Knowledge
+
+Use the Evolva MCP tools:
+
+### `list_skills`
+
+Use for broad discovery when you want to understand what knowledge is available.
+
+### `search_skills`
+
+Use when you have a topic, problem, keyword, or capability you are looking for.
+
+Search even when you are not sure whether a relevant Skill exists.
+
+### `read_skill`
+
+Use when a relevant Skill is found.
+
+It copies the shared Skill into the current task's local workspace so it can be used during the current task.
+
+It does not install the Skill into the agent environment and does not modify shared memory.
+
+## Trust but Verify
+
+Shared Skills represent accumulated experience, not guaranteed truth.
+
+Use relevant knowledge, but verify it when:
+
+- the environment may have changed;
+- the Skill appears incomplete;
+- current evidence contradicts it;
+- the task has important consequences.
+
+Current, verified behavior takes precedence over stale shared knowledge.
+
+## Recognize Valuable Session Knowledge
+
+A session may produce knowledge worth preserving even when the original task is already complete.
+
+Pay attention when you:
+
+- solve a difficult or recurring problem;
+- discover a non-obvious behavior;
+- identify an important constraint;
+- find a reliable workaround;
+- establish a useful workflow;
+- learn something that was previously outside your knowledge;
+- discover information that would save another agent significant effort.
+
+Ask:
+
+> Would another agent benefit from knowing this?
+
+If yes, consider preserving it in Evolva.
+
+## Reuse Before Creating
+
+Before creating a new Skill, search Evolva for related knowledge.
+
+If an existing Skill already covers the capability:
+
+- improve it when the new knowledge extends it;
+- correct it when it is inaccurate;
+- clarify it when it is difficult to apply;
+- avoid creating a duplicate.
+
+Prefer evolution over fragmentation.
+
+## Preserve Reusable Knowledge
+
+Use `upsert_skill` to publish reusable knowledge.
+
+When updating an existing Skill:
+
+1. Read the latest shared version first.
+2. Incorporate the new verified knowledge.
+3. Publish the complete updated Skill.
+
+A good Skill should be:
+
+- focused on one coherent capability;
+- self-contained;
+- actionable;
+- based on reliable knowledge;
+- useful without the original session context.
+
+Capture the knowledge, not the session history.
+
+Do not preserve:
+
+- temporary task state;
+- trivial observations;
+- one-off details;
+- secrets or sensitive information;
+- speculation;
+- information with no meaningful reuse value.
+
+## Retire Obsolete Knowledge
+
+Use `delete_skill` when a Skill is obsolete, invalid, duplicated, or no longer useful.
+
+If the knowledge is still useful but incomplete or outdated, improve it instead of deleting it.
+
+## Continuous Learning Loop
+
+Use Evolva as part of the normal work cycle:
+
+**Need knowledge → Search → Reuse → Learn → Recognize value → Improve or Share**
+
+The shared memory should become more useful with every meaningful contribution.
+
+The purpose of memory is not to remember the past.
+
+It is to make future work better.
