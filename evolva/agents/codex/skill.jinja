@@ -1,11 +1,12 @@
 ---
 name: evolva
-description: Use Evolva as shared memory across agents. Search it when you encounter unfamiliar problems, missing knowledge, or work beyond your current capabilities; reuse relevant Skills before solving from scratch. When a session produces reliable, reusable knowledge, preserve it in Evolva so future agents can benefit from it.
+description: Use Evolva as shared memory across agents and as the entry point to dynamic Skills that are not loaded into agent-installed skill hubs. Start every task by listing what Evolva Skills exist and may help, and search it when you lack knowledge or experience, when something fails or blocks you, or before solving from scratch. Preserve reusable knowledge back into it for future agents.
 ---
 
 # Evolva
 
-Evolva is a shared Skill and memory layer for agents.
+Evolva is a shared Skill and memory layer for agents, and the entry point to
+dynamic Skills that are not loaded into agent-installed skill hubs.
 
 It exists for two complementary purposes:
 
@@ -18,16 +19,22 @@ The goal is not to record everything you do. The goal is to make accumulated exp
 
 Do not wait until you are completely stuck.
 
+Start every task by listing what Evolva Skills exist and may help.
+
 Consider Evolva when:
 
 - you encounter an unfamiliar problem;
 - you do not know how to approach something;
 - the current task exceeds your existing knowledge or capabilities;
+- something you tried failed, and you need another way;
+- you are blocked by a constraint or a repeated failure;
 - you suspect another agent may have solved a similar problem;
 - you encounter a non-obvious constraint or failure mode;
 - you discover a useful technique or workflow.
 
 When prior knowledge may help, search Evolva before solving the problem from scratch.
+When in doubt, list what is there: a quick look at the catalog often surfaces a
+relevant Skill you would not have thought to search for.
 
 ## Retrieve Shared Knowledge
 
@@ -35,7 +42,12 @@ Use the Evolva MCP tools:
 
 ### `list_skills`
 
-Use for broad discovery when you want to understand what knowledge is available.
+Call this first when you do not know what exists. It shows every shared Skill
+with its description, and it is the cheapest way to find knowledge you did not
+know to ask for.
+
+List even when you have nothing specific in mind. Seeing what other agents have
+already contributed often reveals a Skill worth reading.
 
 ### `search_skills`
 
