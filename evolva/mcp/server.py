@@ -13,9 +13,7 @@ from pydantic import Field
 from evolva.storage.interface import Storage
 
 
-def _tool_errors(tool: Callable) -> Callable:
-    """Report storage errors to the agent instead of as server crashes."""
-
+def _handle_errors(tool: Callable[..., Any]) -> Callable[..., Any]:
     @wraps(tool)
     def wrapper(*args: Any, **kwargs: Any) -> Any:
         try:
@@ -27,72 +25,81 @@ def _tool_errors(tool: Callable) -> Callable:
 
 
 class MCPServer:
-    """Bridge between an MCP client and a Storage implementation."""
+    """Expose Evolva shared Skills through MCP."""
 
-    def __init__(self, storage: Storage):
+    def __init__(self, storage: Storage) -> None:
         self.storage = storage
         self.server = SDKServer(
             "evolva",
             instructions=(
-                "Evolva is a shared skills and memory layer for agents. Read skills "
-                "to reuse what other agents have learned, and save your own reusable "
-                "experience back as a skill so the shared memory keeps evolving."
+                "Evolva is a shared Skill and memory layer for agents. "
+                "Reuse relevant Skills before meaningful work, and publish "
+                "reusable knowledge after learning it."
             ),
         )
 
+        self._register_tools()
+
+    def _register_tools(self) -> None:
+        self._register_list_skills()
+        self._register_search_skills()
+        self._register_read_skill()
+        self._register_upsert_skill()
+        self._register_delete_skill()
+
+    def _register_list_skills(self) -> None:
         @self.server.tool(
-            description="List every skill shared in the repository (name, description).",
+            description=(
+                "List all shared Skills. "
+                "Use for broad discovery when you do not know what to search for."
+            ),
             annotations=ToolAnnotations(read_only_hint=True),
         )
-        @_tool_errors
+        @_handle_errors
         def list_skills() -> list[dict[str, Any]]:
             return self.storage.list_skills()
 
+    def _register_search_skills(self) -> None:
         @self.server.tool(
-            description="Find shared skills by keyword before reading or updating one.",
+            description=(
+                "Search shared Skills by name or description. "
+                "Use before reading or creating a Skill when the topic is known."
+            ),
             annotations=ToolAnnotations(read_only_hint=True),
         )
-        @_tool_errors
+        @_handle_errors
         def search_skills(
             keywords: Annotated[
                 list[str],
                 Field(
-                    description=(
-                        'Separate words or short phrases to look for, e.g. ["pdf", '
-                        '"forms"]. Matching is case-insensitive substring matching '
-                        "against skill names and descriptions, and a skill is returned "
-                        "if any keyword occurs in it."
-                    )
+                    description="Keywords or short phrases describing the knowledge needed."
                 ),
             ],
         ) -> list[dict[str, Any]]:
             return self.storage.search_skills(keywords)
 
+    def _register_read_skill(self) -> None:
         @self.server.tool(
             description=(
-                "Copy a shared skill into a temporary directory for the current task "
-                "and return the written path."
+                "Copy a shared Skill into the current task's local workspace for reuse. "
+                "This only creates a local copy; the shared Skill is not modified."
             ),
             annotations=ToolAnnotations(read_only_hint=True),
         )
-        @_tool_errors
+        @_handle_errors
         def read_skill(
             skill_name: Annotated[
                 str,
                 Field(
-                    description=(
-                        "Skill name, as returned by list_skills or search_skills."
-                    )
+                    description="Exact Skill name from list_skills or search_skills."
                 ),
             ],
             save_dir: Annotated[
                 str,
                 Field(
                     description=(
-                        "Temporary directory for this task's copy of the skill; pass "
-                        "the parent directory, the skill is written to "
-                        "<save_dir>/<skill_name>. Do not point this at the agent's own "
-                        "skills folder: the copy is only meant for the current task."
+                        "Parent directory for the temporary copy. "
+                        "The Skill is written to <save_dir>/<skill_name>."
                     )
                 ),
             ],
@@ -100,59 +107,60 @@ class MCPServer:
             self.storage.read_skill(skill_name, save_dir)
             return str(Path(save_dir).expanduser() / skill_name)
 
+    def _register_upsert_skill(self) -> None:
         @self.server.tool(
             description=(
-                "Publish a local skill directory, replacing the shared copy. Fails if "
-                "the shared copy changed first; the local change is rolled back, so "
-                "read the latest version, re-apply it and retry."
+                "Publish a complete Skill to shared memory. "
+                "Use when creating reusable knowledge or improving an existing Skill. "
+                "Read the latest shared copy before updating one."
             ),
-            annotations=ToolAnnotations(destructive_hint=True, idempotent_hint=True),
+            annotations=ToolAnnotations(
+                destructive_hint=True,
+                idempotent_hint=True,
+            ),
         )
-        @_tool_errors
+        @_handle_errors
         def upsert_skill(
             skill_name: Annotated[
                 str,
-                Field(
-                    description=(
-                        "Skill name, as returned by list_skills or search_skills."
-                    )
-                ),
+                Field(description="Skill name to create or update."),
             ],
             upload_dir: Annotated[
                 str,
                 Field(
                     description=(
-                        "Local skill directory to publish; it must contain a SKILL.md "
-                        "with a description."
+                        "Complete Skill directory to publish. Must contain SKILL.md."
                     )
                 ),
             ],
             message: Annotated[
-                str, Field(description="Commit message describing the change.")
+                str,
+                Field(description="Short description of the change."),
             ] = "",
         ) -> str:
             self.storage.upsert_skill(skill_name, upload_dir, message)
             return f"upserted {skill_name}"
 
+    def _register_delete_skill(self) -> None:
         @self.server.tool(
             description=(
-                "Delete a skill from the shared repository. Fails if the shared copy "
-                "changed first; the local change is rolled back."
+                "Remove a shared Skill. "
+                "Use only for obsolete, invalid, or duplicate knowledge."
             ),
-            annotations=ToolAnnotations(destructive_hint=True, idempotent_hint=True),
+            annotations=ToolAnnotations(
+                destructive_hint=True,
+                idempotent_hint=True,
+            ),
         )
-        @_tool_errors
+        @_handle_errors
         def delete_skill(
             skill_name: Annotated[
                 str,
-                Field(
-                    description=(
-                        "Skill name, as returned by list_skills or search_skills."
-                    )
-                ),
+                Field(description="Exact Skill name to remove."),
             ],
             message: Annotated[
-                str, Field(description="Commit message describing the change.")
+                str,
+                Field(description="Short description of why it is being removed."),
             ] = "",
         ) -> str:
             self.storage.delete_skill(skill_name, message)
