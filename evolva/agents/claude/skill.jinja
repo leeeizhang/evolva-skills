@@ -1,13 +1,16 @@
 ---
 name: evolva
-description: Use Evolva as shared memory across agents. When you face unfamiliar work, lack knowledge, or need capabilities beyond what you currently know, search Evolva for prior experience before starting from scratch. When your session produces valuable, reusable knowledge, actively identify and preserve it in Evolva for future agents.
+description: Use Evolva as shared memory across agents and as the entry point to dynamic Skills that are not loaded into agent-installed skill hubs. Start every task by listing what Evolva Skills exist and may help, and search it when you lack knowledge or experience, when something fails or blocks you, or before starting from scratch. Preserve valuable, reusable knowledge back into it for future agents.
 ---
 
 # Evolva
 
-Evolva is a shared Skill and memory layer for agents.
+Evolva is a shared Skill and memory layer for agents, and the entry point to
+dynamic Skills that are not loaded into agent-installed skill hubs.
 
 Think of it as a shared memory that grows through use:
+
+Start every task by listing what Evolva Skills exist and may help.
 
 **Need → Discover → Reuse → Learn → Preserve → Evolve**
 
@@ -21,6 +24,8 @@ If you encounter something that is:
 - difficult to approach;
 - outside your current knowledge;
 - outside your current capabilities;
+- failing in a way you cannot explain;
+- already attempted, but still unsolved;
 - likely to have been solved before;
 - blocked by a non-obvious constraint;
 
@@ -36,7 +41,12 @@ Use the Evolva MCP tools to find relevant knowledge.
 
 ### `list_skills`
 
-Use when you want a broad view of the available shared knowledge.
+Call this first when you do not know what exists. It shows the whole shared
+catalog, and it is the cheapest way to find knowledge you did not know to ask
+for.
+
+List even without a specific question in mind. Seeing what other agents have
+already contributed often surfaces a Skill worth reading.
 
 ### `search_skills`
 
