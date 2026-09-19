@@ -22,3 +22,17 @@ def save_config(config: dict[str, Any]) -> None:
     path = CONFIG_PATH.expanduser()
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(yaml.safe_dump(config, sort_keys=False), encoding="utf-8")
+
+
+def set_agent_enabled(name: str, enabled: bool) -> None:
+    """Record an agent integration as enabled or disabled."""
+    config = load_config()
+    agents: list[str] = config.get("agents", [])
+
+    if enabled and name not in agents:
+        agents.append(name)
+    elif not enabled and name in agents:
+        agents.remove(name)
+
+    config["agents"] = sorted(agents)
+    save_config(config)

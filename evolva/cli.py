@@ -7,6 +7,7 @@ from rich.console import Console
 from evolva.config import CONFIG_PATH, load_config, save_config
 from evolva.mcp.server import MCPServer
 from evolva.storage.interface import create_storage
+from evolva.tui import run_tui
 
 console = Console()
 error_console = Console(stderr=True)
@@ -17,11 +18,15 @@ def main(argv: list[str] | None = None) -> int:
         prog="evolva",
         description="Shared skills and memory for agents.",
     )
-    commands = parser.add_subparsers(required=True, dest="command")
+    commands = parser.add_subparsers(dest="command")
     add_mcp_command(commands)
     add_set_command(commands)
 
     args = parser.parse_args(argv)
+    if args.command is None:
+        run_tui()
+        return 0
+
     args.handler(args)
     return 0
 

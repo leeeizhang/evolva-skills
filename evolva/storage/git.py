@@ -17,6 +17,13 @@ class GitStorage(Storage):
     """Store skills in a git repository."""
 
     type: ClassVar[str] = "git"
+    options: ClassVar[list[dict[str, str]]] = [
+        {
+            "name": "url",
+            "prompt": "Git repository URL (e.g. git@github.com:you/skills.git)",
+        },
+        {"name": "branch", "prompt": "Branch", "default": "main"},
+    ]
 
     STORAGE_DIR = Path("~/.evolva/git-storage")
     GIT_USERNAME = os.environ.get("GIT_USERNAME", "evolva")

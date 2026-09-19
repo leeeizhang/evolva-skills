@@ -49,3 +49,8 @@ def create_agent(data: dict[str, Any]) -> Agent:
         raise ValueError(f"Unknown agent type: {agent_type}")
 
     return agent_cls.from_dict(data)
+
+
+def list_agents() -> list[str]:
+    """List the registered agent implementations."""
+    return sorted(_AGENT_REGISTRY)

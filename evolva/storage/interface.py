@@ -6,6 +6,7 @@ from typing import Any, ClassVar
 
 class Storage(ABC):
     type: ClassVar[str]
+    options: ClassVar[list[dict[str, str]]] = []
 
     @classmethod
     @abstractmethod
@@ -67,6 +68,16 @@ def register_storage(storage_cls: type[Storage]) -> type[Storage]:
     return storage_cls
 
 
+def get_storage_class(storage_type: str) -> type[Storage]:
+    """Look up a registered storage implementation."""
+    storage_cls = _STORAGE_REGISTRY.get(storage_type)
+
+    if storage_cls is None:
+        raise ValueError(f"Unknown storage type: {storage_type}")
+
+    return storage_cls
+
+
 def create_storage(data: dict[str, Any]) -> Storage:
     """Create a Storage from configuration data."""
     storage_type = data.get("type")
@@ -74,9 +85,9 @@ def create_storage(data: dict[str, Any]) -> Storage:
     if not storage_type:
         raise ValueError("Storage type is required.")
 
-    storage_cls = _STORAGE_REGISTRY.get(storage_type)
+    return get_storage_class(storage_type).from_dict(data)
 
-    if storage_cls is None:
-        raise ValueError(f"Unknown storage type: {storage_type}")
 
-    return storage_cls.from_dict(data)
+def list_storages() -> list[str]:
+    """List the registered storage implementations."""
+    return sorted(_STORAGE_REGISTRY)
