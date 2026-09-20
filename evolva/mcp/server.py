@@ -12,7 +12,7 @@ from pydantic import Field
 
 from evolva.storage.interface import Storage
 
-MAX_NAMES = 20
+MAX_NAMES = 32
 
 
 def build_instructions(storage: Storage) -> str:
@@ -42,8 +42,8 @@ def _names(storage: Storage) -> str:
     """
     try:
         names = [str(skill.get("name", "?")) for skill in storage.list_skills()]
-    except (OSError, RuntimeError, ValueError) as error:
-        return f"unavailable ({error}); call list_skills to retry"
+    except Exception as error:
+        return f"unavailable (error: {error}); call list_skills to retry"
 
     if not names:
         return "none published yet, use upsert_skill to add the first one"
