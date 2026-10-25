@@ -54,6 +54,9 @@ class ClaudeAgent(Agent):
         del servers["evolva"]
         config.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
 
+    def curation_command(self) -> list[str]:
+        return ["claude", "/evolva Curate the shared skill library."]
+
     @staticmethod
     def _render(name: str) -> str:
         template = (Path(__file__).parent / name).read_text(encoding="utf-8")

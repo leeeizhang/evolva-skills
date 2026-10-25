@@ -23,6 +23,11 @@ class Agent(ABC):
         """Uninstall Evolva integration for this agent."""
         raise NotImplementedError
 
+    @abstractmethod
+    def curation_command(self) -> list[str]:
+        """Return command arguments for a new skill-library curation session."""
+        raise NotImplementedError
+
 
 _AGENT_REGISTRY: dict[str, type[Agent]] = {}
 

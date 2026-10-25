@@ -1,163 +1,109 @@
 ---
 name: evolva
-description: Use Evolva as shared memory across agents and as the entry point to dynamic Skills that are not loaded into agent-installed skill hubs. Start every task by listing what Evolva Skills exist and may help, and search it when you lack knowledge or experience, when something fails or blocks you, or before starting from scratch. Preserve valuable, reusable knowledge back into it for future agents.
+description: Load this skill at the start of every task, before planning or acting, even for familiar work. Evolva is a shared skill library and reusable memory across agents and sessions, including skills absent from your installed catalog. Use it to discover and reuse skills, repair verified defects, capture reusable capabilities, and curate the library when requested.
 ---
 
 # Evolva
 
-Evolva is a shared Skill and memory layer for agents, and the entry point to
-dynamic Skills that are not loaded into agent-installed skill hubs.
+Evolva is a shared skill library and reusable memory across agents and sessions.
+Its MCP catalog includes skills absent from your installed skill list.
 
-Think of it as a shared memory that grows through use:
+## Reuse and repair
 
-Start every task by listing what Evolva Skills exist and may help.
+1. At task start, call `list_skills` to discover related capabilities. Read relevant
+   skills even for familiar work. When relevance is uncertain, read the strongest
+   candidate before ruling it out. Use `search_skills` for a known topic,
+   unfamiliar work, a failure, or a blocker before solving from scratch.
+2. `read_skill` returns a local directory path. Open its `SKILL.md`, then only
+   the supporting files needed for the task. Use a fresh task-local directory
+   for each download.
+3. Check instructions against the current environment and observed results.
+   Investigate failed steps, missing prerequisites, and conflicting evidence.
+   Current verified behavior takes precedence.
 
-**Need → Discover → Reuse → Learn → Preserve → Evolve**
+## Capture reusable work
 
-Evolva should be part of your normal problem-solving process, not only something you use when you are stuck.
+During work, look for wrong or missing skill steps, user corrections to reusable
+workflows, successful workarounds, and new capabilities, tool combinations, or
+constraints. Act when useful knowledge is verified; review again before your
+final response, even if no skill was used. Smooth successes count too.
 
-## When You Need Knowledge
+Publish verified additions or corrections that would improve a future task.
+Knowledge specific to one repository or environment qualifies when its scope and
+prerequisites are clear. A local success alone does not establish a general rule.
+Search first and read likely matches: extend an existing skill for the same
+capability; create a new skill only for a distinct capability. No useful new
+knowledge means no write.
 
-If you encounter something that is:
+## Write and publish
 
-- unfamiliar;
-- difficult to approach;
-- outside your current knowledge;
-- outside your current capabilities;
-- failing in a way you cannot explain;
-- already attempted, but still unsolved;
-- likely to have been solved before;
-- blocked by a non-obvious constraint;
+For updates, download the latest shared package into a fresh directory.
+Apply changes there; preserve useful instructions, scripts, references, templates,
+and assets.
+Exclude generated caches and build outputs.
 
-check Evolva.
+For a new skill, use a short lowercase, hyphenated capability name. Begin
+`SKILL.md` with YAML frontmatter containing `name` and `description`; make `name`
+match the directory name. Describe what the skill does and when to use it.
 
-Do not assume you need to solve everything from first principles.
+Write instructions another agent can follow without this session:
 
-Another agent may already have investigated the problem and left reusable knowledge behind.
+- State the outcome, prerequisites, actionable steps, and relevant checks.
+- Attach failure handling and pitfalls to the steps they affect, with a brief
+  reason.
+- Mark repository, environment, or version limits. Preserve the scope of user
+  corrections; do not turn a task-specific request into a standing rule.
+- Replace incorrect guidance in place and merge duplicate rules.
+- For setup failures, save verified setup or recovery steps, not permanent
+  claims that a tool cannot work.
+- Keep the entrypoint concise. Put detailed subtopics in linked references and
+  state when to read them. Keep separate skills when distinct purposes or
+  triggers make them easier to find independently.
+- Preserve procedures and evidence, not transcripts, temporary task state,
+  one-off details, secrets, sensitive data, trivial observations, or speculation.
 
-## Discover
+Check changed claims against current source, authoritative documentation, or
+observed execution. Exercise changed commands or scripts when feasible; state
+what was verified and any remaining limits. Do not present unverified guesses
+as working procedures. Check frontmatter, relative links, and required files.
 
-Use the Evolva MCP tools to find relevant knowledge.
+Call `upsert_skill` with the complete directory and a short change message;
+it replaces the entire shared package. Confirm success: local edits alone are
+not published. Complete verified repairs and useful captures before your final
+response. If verification or publication is blocked, retain local work and report
+what remains and why; do not claim it was saved.
 
-### `list_skills`
+Before deleting a confirmed obsolete, invalid, or redundant skill, read its
+contents. Repair knowledge that remains useful. For merges or renames, follow
+the curation workflow below and verify replacements before deleting sources.
 
-Call this first when you do not know what exists. It shows the whole shared
-catalog, and it is the cheapest way to find knowledge you did not know to ask
-for.
+## Curate the library
 
-List even without a specific question in mind. Seeing what other agents have
-already contributed often surfaces a Skill worth reading.
+Use this workflow when the user asks to curate, organize, or consolidate the
+library. Keep whole-library reorganization out of unrelated tasks. Follow the
+requested scope; otherwise review the full catalog. Apply the publishing rules
+above.
 
-### `search_skills`
-
-Use when you have a particular problem, topic, concept, or capability in mind.
-
-Search even when you are uncertain whether anything relevant exists.
-
-### `read_skill`
-
-Use when you find knowledge relevant to the current task.
-
-It copies the shared Skill into the current task's workspace so you can use it.
-
-It is not an installation mechanism and does not modify the shared memory.
-
-## Use What You Find
-
-Shared knowledge is prior experience.
-
-It should inform your work, not replace judgment.
-
-If the current environment disagrees with an existing Skill:
-
-1. investigate;
-2. determine what is currently true;
-3. use the verified behavior;
-4. consider updating the Skill if the discovery is reusable.
-
-## Notice Valuable Knowledge
-
-Do not wait until the end of a session to think about memory.
-
-During the session, notice moments where you:
-
-- solve something unexpectedly difficult;
-- discover a non-obvious solution;
-- uncover an important constraint;
-- find a reliable workaround;
-- develop a repeatable workflow;
-- discover useful behavior of a tool or system;
-- learn something that would otherwise need to be rediscovered.
-
-These are signals that the session may contain reusable knowledge.
-
-Ask:
-
-> If another agent encountered this problem tomorrow, would this knowledge save them time?
-
-If yes, preserve it.
-
-## Search Before You Add
-
-When you decide to preserve knowledge:
-
-1. Search Evolva for related Skills.
-2. Reuse or improve an existing Skill when possible.
-3. Create a new Skill only when the knowledge represents a distinct capability.
-
-Do not create another Skill just because you discovered a new example of an existing concept.
-
-## Share
-
-Use `upsert_skill` to contribute reusable knowledge.
-
-When improving an existing Skill:
-
-1. Read the latest shared version.
-2. Incorporate the new evidence.
-3. Keep the useful existing knowledge.
-4. Publish the complete improved Skill.
-
-Write for an agent who has never seen this session.
-
-Capture the reusable lesson, not the story of how you arrived at it.
-
-## What Not to Preserve
-
-Do not put the following into shared memory:
-
-- session transcripts;
-- temporary state;
-- routine actions;
-- trivial facts;
-- one-off details;
-- secrets;
-- speculation;
-- information that will quickly become irrelevant.
-
-Evolva is not an activity log.
-
-It is a repository of reusable experience.
-
-## Evolve Existing Knowledge
-
-Prefer improving useful knowledge over accumulating new fragments.
-
-If an existing Skill is:
-
-- incomplete → extend it;
-- inaccurate → correct it;
-- unclear → clarify it;
-- duplicated → consolidate it;
-- obsolete → retire it.
-
-Use `delete_skill` only when the knowledge no longer has value.
-
-## The Intended Behavior
-
-The important habit is simple:
-
-**When you need knowledge, look for it.
-When you gain valuable knowledge, leave it behind.**
-
-That is how shared memory evolves.
+1. Call `list_skills`. Group candidates by capability and trigger, using names
+   and descriptions as an index. Read candidate packages and inspect supporting
+   files before deciding to rewrite, merge, rename, or delete them.
+2. Identify unclear descriptions, overlapping procedures, conflicting guidance,
+   and broken instructions or links. Verify suspected defects against current
+   evidence. Age or low usage alone does not prove a skill is obsolete. Report
+   unresolved claims instead of inventing corrections.
+3. Improve names, descriptions, and triggers for discovery. Merge only around a
+   coherent capability; distill shared procedures and remove repetition.
+   Keep separate skills when their triggers, prerequisites, or outcomes make
+   them easier to use independently. Organize linked references by reusable
+   topic, not by session or source skill.
+4. Prepare changes from the latest shared packages. Preserve scripts, templates,
+   assets, and useful details. Repair relative paths and references to renamed
+   or merged skills, including links in other affected packages.
+5. Publish destinations with `upsert_skill`. Download each destination into a
+   fresh directory and check its content, file inventory, and links. Before
+   calling `delete_skill` on a source, verify that every useful part has a
+   working destination and affected callers have been updated. A rename is also
+   a publish-then-delete operation. If replacement verification fails, keep
+   the source.
+6. Report what was updated, merged, renamed, or removed, why, and what remains
+   unresolved. If the inventory needs no changes, report that without writing.
