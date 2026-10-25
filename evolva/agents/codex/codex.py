@@ -60,6 +60,9 @@ class CodexAgent(Agent):
         if cleaned != text:
             config.write_text(cleaned, encoding="utf-8")
 
+    def curation_command(self) -> list[str]:
+        return ["codex", "$evolva Curate the shared skill library."]
+
     @staticmethod
     def _render(name: str) -> str:
         template = (Path(__file__).parent / name).read_text(encoding="utf-8")

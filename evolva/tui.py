@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import shlex
 import sys
 
 import questionary
@@ -27,7 +28,7 @@ def run_tui() -> None:
     while True:
         action = questionary.select(
             "What would you like to do?",
-            choices=["install", "configure", "uninstall", "exit"],
+            choices=["install", "configure", "curate", "uninstall", "exit"],
         ).ask()
         if action in (None, "exit"):
             return
@@ -37,6 +38,8 @@ def run_tui() -> None:
                 _manage_agents("install")
             elif action == "uninstall":
                 _manage_agents("uninstall")
+            elif action == "curate":
+                _curate_skills()
             else:
                 _configure_storage()
         except (ValueError, RuntimeError, OSError) as error:
@@ -76,6 +79,35 @@ def _manage_agents(action: str) -> None:
         agent.uninstall()
         set_agent_enabled(target, False)
         console.print(f"[green]Uninstalled[/green] from [bold]{target}[/bold]")
+
+
+def _curate_skills() -> None:
+    """Refresh an installed integration and print a curation launch command."""
+    config = load_config()
+    if not config.get("storage"):
+        console.print("[yellow]Configure storage before curating skills.[/yellow]")
+        return
+
+    installed = [name for name in list_agents() if name in config.get("agents", [])]
+    if not installed:
+        console.print(
+            "[yellow]Install an agent integration before curating skills.[/yellow]"
+        )
+        return
+
+    target = questionary.select("Curate with which agent?", choices=installed).ask()
+    if target is None:
+        return
+
+    agent = create_agent({"type": target})
+    agent.install()
+    console.print("Evolva instructions refreshed. Run in a new session:")
+    console.print(
+        shlex.join(agent.curation_command()),
+        markup=False,
+        highlight=False,
+        soft_wrap=True,
+    )
 
 
 def _configure_storage() -> None:
