@@ -17,7 +17,7 @@ reuse makes the skills better).
 
 - ♻️ **Skills that iterate themselves**: an agent reuses a skill, improves it with
   what it just learned, and publishes it back, so knowledge compounds.
-- 🌐 **Heterogeneous & distributed**: Codex, Claude, or anything that speaks MCP
+- 🌐 **Heterogeneous & distributed**: Codex, Claude, Pi, or anything that speaks MCP
   share a single repository across sessions and machines.
 - 🕰 **Cross-session continuity**: nothing is lost when a session ends; the next
   session starts from everything the previous ones learned.

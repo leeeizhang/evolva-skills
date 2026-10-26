@@ -63,7 +63,7 @@ def add_set_agent_command(settings: argparse._SubParsersAction) -> None:
     parser = settings.add_parser(
         "agent", help="Enable or disable an agent integration."
     )
-    parser.add_argument("target", help="Agent integration, e.g. codex or claude.")
+    parser.add_argument("target", help="Agent integration, e.g. codex, claude, or pi.")
     action = parser.add_mutually_exclusive_group(required=True)
     action.add_argument("--enable", action="store_true", help="Enable the agent.")
     action.add_argument("--disable", action="store_true", help="Disable the agent.")

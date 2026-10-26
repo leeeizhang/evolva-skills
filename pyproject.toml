@@ -30,6 +30,7 @@ include = ["evolva*"]
 [tool.setuptools.package-data]
 "evolva.agents.codex" = ["*.jinja"]
 "evolva.agents.claude" = ["*.jinja"]
+"evolva.agents.pi" = ["*.jinja"]
 
 [tool.ruff]
 target-version = "py311"
