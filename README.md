@@ -59,6 +59,7 @@ evolva set storage git url=git@github.com:<you>/skills.git branch=main
 ```bash
 evolva set agent codex --enable
 evolva set agent claude --enable
+evolva set agent pi --enable
 ```
 
 #### Uninstall
@@ -66,6 +67,7 @@ evolva set agent claude --enable
 ```bash
 evolva set agent codex --disable
 evolva set agent claude --disable
+evolva set agent pi --disable
 ```
 
 This removes the skill and the MCP configuration from that agent.
