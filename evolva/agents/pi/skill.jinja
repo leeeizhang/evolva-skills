@@ -1,0 +1,111 @@
+---
+name: evolva
+description: Load this skill at the start of every task, before planning or acting, even for familiar work. Evolva is a shared skill library and reusable memory across agents and sessions, including skills absent from your installed catalog. Use it to discover and reuse skills, repair verified defects, capture reusable capabilities, and curate the library when requested.
+---
+
+# Evolva
+
+Evolva is a shared skill library and reusable memory across agents and sessions.
+Its MCP catalog includes skills absent from your installed skill list.
+Pi exposes these tools with the `mcp__evolva__` prefix. Load this skill with
+`/skill:evolva`; run `/reload` after installing or updating the integration.
+
+## Reuse and repair
+
+1. At task start, call `mcp__evolva__list_skills` to discover related capabilities. Read relevant
+   skills even for familiar work. When relevance is uncertain, read the strongest
+   candidate before ruling it out. Use `mcp__evolva__search_skills` for a known topic,
+   unfamiliar work, a failure, or a blocker before solving from scratch.
+2. `mcp__evolva__read_skill` returns a local directory path. Open its `SKILL.md`, then only
+   the supporting files needed for the task. Use a fresh task-local directory
+   for each download.
+3. Check instructions against the current environment and observed results.
+   Investigate failed steps, missing prerequisites, and conflicting evidence.
+   Current verified behavior takes precedence.
+
+## Capture reusable work
+
+During work, look for wrong or missing skill steps, user corrections to reusable
+workflows, successful workarounds, and new capabilities, tool combinations, or
+constraints. Act when useful knowledge is verified; review again before your
+final response, even if no skill was used. Smooth successes count too.
+
+Publish verified additions or corrections that would improve a future task.
+Knowledge specific to one repository or environment qualifies when its scope and
+prerequisites are clear. A local success alone does not establish a general rule.
+Search first and read likely matches: extend an existing skill for the same
+capability; create a new skill only for a distinct capability. No useful new
+knowledge means no write.
+
+## Write and publish
+
+For updates, download the latest shared package into a fresh directory.
+Apply changes there; preserve useful instructions, scripts, references, templates,
+and assets.
+Exclude generated caches and build outputs.
+
+For a new skill, use a short lowercase, hyphenated capability name. Begin
+`SKILL.md` with YAML frontmatter containing `name` and `description`; make `name`
+match the directory name. Describe what the skill does and when to use it.
+
+Write instructions another agent can follow without this session:
+
+- State the outcome, prerequisites, actionable steps, and relevant checks.
+- Attach failure handling and pitfalls to the steps they affect, with a brief
+  reason.
+- Mark repository, environment, or version limits. Preserve the scope of user
+  corrections; do not turn a task-specific request into a standing rule.
+- Replace incorrect guidance in place and merge duplicate rules.
+- For setup failures, save verified setup or recovery steps, not permanent
+  claims that a tool cannot work.
+- Keep the entrypoint concise. Put detailed subtopics in linked references and
+  state when to read them. Keep separate skills when distinct purposes or
+  triggers make them easier to find independently.
+- Preserve procedures and evidence, not transcripts, temporary task state,
+  one-off details, secrets, sensitive data, trivial observations, or speculation.
+
+Check changed claims against current source, authoritative documentation, or
+observed execution. Exercise changed commands or scripts when feasible; state
+what was verified and any remaining limits. Do not present unverified guesses
+as working procedures. Check frontmatter, relative links, and required files.
+
+Call `mcp__evolva__upsert_skill` with the complete directory and a short change message;
+it replaces the entire shared package. Confirm success: local edits alone are
+not published. Complete verified repairs and useful captures before your final
+response. If verification or publication is blocked, retain local work and report
+what remains and why; do not claim it was saved.
+
+Before deleting a confirmed obsolete, invalid, or redundant skill, read its
+contents. Repair knowledge that remains useful. For merges or renames, follow
+the curation workflow below and verify replacements before deleting sources.
+
+## Curate the library
+
+Use this workflow when the user asks to curate, organize, or consolidate the
+library. Keep whole-library reorganization out of unrelated tasks. Follow the
+requested scope; otherwise review the full catalog. Apply the publishing rules
+above.
+
+1. Call `mcp__evolva__list_skills`. Group candidates by capability and trigger, using names
+   and descriptions as an index. Read candidate packages and inspect supporting
+   files before deciding to rewrite, merge, rename, or delete them.
+2. Identify unclear descriptions, overlapping procedures, conflicting guidance,
+   and broken instructions or links. Verify suspected defects against current
+   evidence. Age or low usage alone does not prove a skill is obsolete. Report
+   unresolved claims instead of inventing corrections.
+3. Improve names, descriptions, and triggers for discovery. Merge only around a
+   coherent capability; distill shared procedures and remove repetition.
+   Keep separate skills when their triggers, prerequisites, or outcomes make
+   them easier to use independently. Organize linked references by reusable
+   topic, not by session or source skill.
+4. Prepare changes from the latest shared packages. Preserve scripts, templates,
+   assets, and useful details. Repair relative paths and references to renamed
+   or merged skills, including links in other affected packages.
+5. Publish destinations with `mcp__evolva__upsert_skill`. Download each destination into a
+   fresh directory and check its content, file inventory, and links. Before
+   calling `mcp__evolva__delete_skill` on a source, verify that every useful part has a
+   working destination and affected callers have been updated. A rename is also
+   a publish-then-delete operation. If replacement verification fails, keep
+   the source.
+6. Report what was updated, merged, renamed, or removed, why, and what remains
+   unresolved. If the inventory needs no changes, report that without writing.
