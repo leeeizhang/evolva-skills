@@ -37,7 +37,7 @@ not require a separate plugin loader.
 
 ## Data flow
 
-1. Setup validates storage settings before saving configuration. The TUI installs
+1. Setup validates storage settings before saving configuration. The CLI or TUI installs
    an agent adapter and records its enabled state.
 2. The agent launches `evolva mcp`. The CLI loads configuration, creates storage,
    and injects it and the custom instruction into `MCPServer`.
@@ -51,8 +51,8 @@ and push; failures are reported to the caller. Git owns this behavior, not MCP.
 
 ## Current boundaries
 
-The TUI handles agent installation and removal. CLI storage setup and MCP startup
-are implemented; `evolva set agent` currently raises `NotImplementedError`.
+The CLI and TUI handle agent installation and removal. Enabling an agent requires
+configured storage; disabling an agent also works without storage configuration.
 Custom instructions are appended to the default MCP guidance at server startup.
 
 See [agent extensions](adding-agents.md) and [storage extensions](adding-storage.md)

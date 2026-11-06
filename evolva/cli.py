@@ -4,7 +4,8 @@ import argparse
 
 from rich.console import Console
 
-from evolva.config import CONFIG_PATH, load_config, save_config
+from evolva.agents.interface import create_agent
+from evolva.config import CONFIG_PATH, load_config, save_config, set_agent_enabled
 from evolva.config import set_instruction as save_instruction
 from evolva.mcp.server import MCPServer
 from evolva.storage.interface import create_storage
@@ -122,7 +123,25 @@ def set_storage(args: argparse.Namespace) -> None:
 
 def set_agent(args: argparse.Namespace) -> None:
     """Enable or disable an agent integration."""
-    raise NotImplementedError("`evolva set agent` is not implemented yet.")
+    try:
+        agent = create_agent({"type": args.target})
+        if args.enable:
+            if not load_config().get("storage"):
+                raise ValueError(
+                    "No storage configured. Run evolva set storage "
+                    "git url=<repo> branch=<branch> first."
+                )
+            agent.install()
+        else:
+            agent.uninstall()
+        set_agent_enabled(args.target, args.enable)
+    except (ValueError, RuntimeError, OSError) as error:
+        error_console.print("[red]Agent setup failed.[/red]")
+        error_console.print(str(error), markup=False)
+        raise SystemExit(1) from error
+
+    verb = "Installed into" if args.enable else "Uninstalled from"
+    console.print(f"[green]{verb}[/green] [bold]{args.target}[/bold]")
 
 
 def parse_options(options: list[str]) -> dict[str, str]:

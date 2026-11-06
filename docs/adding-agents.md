@@ -24,7 +24,7 @@ with `@register_agent`, and give it a unique `type`, such as `"nova"`.
 | `install()` | Write the Evolva skill and register an MCP server running `evolva mcp`. |
 | `uninstall()` | Remove only Evolva's skill and MCP entry. |
 
-The TUI currently constructs agents with only `{"type": name}`. Use sensible
+The CLI and TUI construct agents with only `{"type": name}`. Use sensible
 defaults or environment settings; extend configuration explicitly if more fields
 are required.
 
@@ -56,6 +56,6 @@ the class. Add template packaging under `[tool.setuptools.package-data]`:
 - Build a wheel and check that it contains both templates.
 - Try install and uninstall through `evolva` in a disposable profile.
 
-The TUI discovers registered agents automatically. The CLI agent handler is
-currently a stub, so do not rely on `evolva set agent` for verification. Run the
+The TUI discovers registered agents automatically. Verify CLI installation with
+`evolva set agent <type> --enable` and removal with `--disable`. Run the
 checks in [AGENTS.md](../AGENTS.md#local-checks) and document the new integration.
