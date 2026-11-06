@@ -38,7 +38,7 @@ Two interfaces: pick either.
 
 #### 1. Interactive
 
-A guided flow that covers install, configuration, and uninstall:
+A guided flow that covers install, storage, custom instructions, and uninstall:
 
 ```bash
 evolva
@@ -52,6 +52,12 @@ The same operations, scriptable:
 
 ```bash
 evolva set storage git url=git@github.com:<you>/skills.git branch=main
+```
+
+Optionally append custom guidance to the MCP instructions:
+
+```bash
+evolva set instruction "Write shared skills in Chinese."
 ```
 
 **Step 2: install it for your agents**

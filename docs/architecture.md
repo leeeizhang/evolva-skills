@@ -11,12 +11,12 @@ Runtime:  Agent -> MCP over stdio -> MCPServer -> Storage -> skill library
 
 | Component | Role |
 | --- | --- |
-| `evolva/agents/` | Install an Evolva skill and MCP configuration for each agent; provide a curation command. |
+| `evolva/agents/` | Install an Evolva skill and MCP configuration for each agent. |
 | `evolva/storage/` | Implement the common skill operations; Git currently uses a local clone and remote sync. |
 | `evolva/mcp/server.py` | Publish `list_skills`, `search_skills`, `read_skill`, `upsert_skill`, and `delete_skill`. |
 | `evolva/cli.py` | Route commands, validate storage setup, and launch the MCP server or TUI. |
-| `evolva/tui.py` | Discover registered implementations and guide setup, installation, removal, and curation. |
-| `evolva/config.py` | Persist storage settings and enabled agent names in `~/.evolva/config.yaml`. |
+| `evolva/tui.py` | Discover registered implementations and guide storage setup, custom instructions, installation, and removal. |
+| `evolva/config.py` | Persist storage settings, custom instructions, and enabled agent names in `~/.evolva/config.yaml`. |
 | `evolva/types/skill.py` | Read `SKILL.md` frontmatter and provide name/description metadata. |
 
 ## Design patterns
@@ -40,7 +40,7 @@ not require a separate plugin loader.
 1. Setup validates storage settings before saving configuration. The TUI installs
    an agent adapter and records its enabled state.
 2. The agent launches `evolva mcp`. The CLI loads configuration, creates storage,
-   and injects it into `MCPServer`.
+   and injects it and the custom instruction into `MCPServer`.
 3. Catalog tools return names and descriptions. `read_skill` copies a complete
    package to `<save_dir>/<skill_name>` and returns that local path.
 4. The agent reads and edits local files. `upsert_skill` publishes the complete
@@ -53,7 +53,7 @@ and push; failures are reported to the caller. Git owns this behavior, not MCP.
 
 The TUI handles agent installation and removal. CLI storage setup and MCP startup
 are implemented; `evolva set agent` currently raises `NotImplementedError`.
-Curation refreshes an integration and prints a command for a new agent session.
+Custom instructions are appended to the default MCP guidance at server startup.
 
 See [agent extensions](adding-agents.md) and [storage extensions](adding-storage.md)
 for the implementation steps.

@@ -5,6 +5,7 @@ import argparse
 from rich.console import Console
 
 from evolva.config import CONFIG_PATH, load_config, save_config
+from evolva.config import set_instruction as save_instruction
 from evolva.mcp.server import MCPServer
 from evolva.storage.interface import create_storage
 from evolva.tui import run_tui
@@ -38,11 +39,12 @@ def add_mcp_command(commands: argparse._SubParsersAction) -> None:
 
 
 def add_set_command(commands: argparse._SubParsersAction) -> None:
-    """evolva set storage|agent"""
+    """evolva set storage|agent|instruction"""
     parser = commands.add_parser("set", help="Update the Evolva configuration.")
     settings = parser.add_subparsers(required=True, dest="setting")
     add_set_storage_command(settings)
     add_set_agent_command(settings)
+    add_set_instruction_command(settings)
 
 
 def add_set_storage_command(settings: argparse._SubParsersAction) -> None:
@@ -70,9 +72,25 @@ def add_set_agent_command(settings: argparse._SubParsersAction) -> None:
     parser.set_defaults(handler=set_agent)
 
 
+def add_set_instruction_command(settings: argparse._SubParsersAction) -> None:
+    """evolva set instruction <text>"""
+    parser = settings.add_parser("instruction", help="Set custom MCP instructions.")
+    parser.add_argument(
+        "instruction", help="Instruction text; use an empty string to clear."
+    )
+    parser.set_defaults(handler=set_instruction)
+
+
+def set_instruction(args: argparse.Namespace) -> None:
+    """Persist user-defined MCP guidance."""
+    save_instruction(args.instruction)
+    console.print(f"[green]Instruction saved[/green] to {CONFIG_PATH.expanduser()}")
+
+
 def run_mcp(args: argparse.Namespace) -> None:
     """Serve the Evolva tools on stdio, using the configured storage."""
-    storage = load_config().get("storage")
+    config = load_config()
+    storage = config.get("storage")
     if not storage:
         error_console.print(
             "[red]No storage configured.[/red] Run [bold]evolva set storage "
@@ -80,7 +98,7 @@ def run_mcp(args: argparse.Namespace) -> None:
         )
         raise SystemExit(1)
 
-    MCPServer(create_storage(storage)).run()
+    MCPServer(create_storage(storage), config.get("instruction", "")).run()
 
 
 def set_storage(args: argparse.Namespace) -> None:

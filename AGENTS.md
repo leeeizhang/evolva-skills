@@ -14,11 +14,11 @@ files. Keep this knowledge portable, user-owned, and independent of any one agen
 
 | Area | Responsibility |
 | --- | --- |
-| `evolva/agents/` | Adapt each agent's skill installation, MCP configuration, and curation command. |
+| `evolva/agents/` | Adapt each agent's skill installation, MCP configuration. |
 | `evolva/storage/` | Discover, read, publish, and delete complete skill packages. |
 | `evolva/mcp/server.py` | Expose storage through five MCP tools over stdio. |
 | `evolva/cli.py` | Parse commands, configure storage, and start the TUI or MCP server. |
-| `evolva/tui.py` | Guide configuration, agent install/uninstall, and curation setup. |
+| `evolva/tui.py` | Guide configuration, agent install/uninstall, storage and instruction setup. |
 | `evolva/config.py` | Read and write `~/.evolva/config.yaml`. |
 | `evolva/types/skill.py` | Parse skill metadata and serialize catalog entries. |
 

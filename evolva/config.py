@@ -36,3 +36,10 @@ def set_agent_enabled(name: str, enabled: bool) -> None:
 
     config["agents"] = sorted(agents)
     save_config(config)
+
+
+def set_instruction(instruction: str) -> None:
+    """Save custom MCP guidance while preserving other configuration."""
+    config = load_config()
+    config["instruction"] = instruction
+    save_config(config)
