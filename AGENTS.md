@@ -59,8 +59,7 @@ pytest
 
 The test directory currently has no tests; CI accepts pytest's no-tests exit
 code. Pre-commit runs lint, formatting, and file checks; pytest runs separately.
-The CLI agent enable/disable handler is currently a stub; use the TUI for that
-workflow until it is implemented.
+Agent integrations can be enabled or disabled through the CLI or TUI.
 
 ## Further reading
 
