@@ -15,8 +15,8 @@ from evolva.storage.interface import Storage
 MAX_NAMES = 32
 
 
-def build_instructions(storage: Storage) -> str:
-    return "\n".join(
+def build_instructions(storage: Storage, instruction: str = "") -> str:
+    instructions = "\n".join(
         [
             "Evolva is a shared skill library and reusable memory across agents "
             "and sessions. Its catalog includes skills absent from the agent's "
@@ -42,6 +42,10 @@ def build_instructions(storage: Storage) -> str:
             f"Skills at connection: {_names(storage)}",
         ]
     )
+
+    if instruction:
+        instructions += f"\n\n{instruction}"
+    return instructions
 
 
 def _names(storage: Storage) -> str:
@@ -74,11 +78,11 @@ def _handle_errors(tool: Callable[..., Any]) -> Callable[..., Any]:
 class MCPServer:
     """Expose Evolva shared Skills through MCP."""
 
-    def __init__(self, storage: Storage) -> None:
+    def __init__(self, storage: Storage, instruction: str = "") -> None:
         self.storage = storage
         self.server = SDKServer(
             "evolva",
-            instructions=build_instructions(storage),
+            instructions=build_instructions(storage, instruction),
         )
 
         self._register_tools()

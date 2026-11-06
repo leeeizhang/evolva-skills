@@ -61,9 +61,6 @@ class PiAgent(Agent):
 
         shutil.rmtree(self.SKILL_DIR.expanduser(), ignore_errors=True)
 
-    def curation_command(self) -> list[str]:
-        return ["pi", "/skill:evolva Curate the shared skill library."]
-
     @staticmethod
     def _render(name: str) -> str:
         template = (Path(__file__).parent / name).read_text(encoding="utf-8")

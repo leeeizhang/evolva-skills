@@ -23,11 +23,10 @@ with `@register_agent`, and give it a unique `type`, such as `"nova"`.
 | `from_dict(cls, data)` | Class method that validates configuration and returns an instance. |
 | `install()` | Write the Evolva skill and register an MCP server running `evolva mcp`. |
 | `uninstall()` | Remove only Evolva's skill and MCP entry. |
-| `curation_command()` | Return a `list[str]` of command arguments that start a curation session. |
 
 The TUI currently constructs agents with only `{"type": name}`. Use sensible
 defaults or environment settings; extend configuration explicitly if more fields
-are required. The TUI prints the curation command for the user to run.
+are required.
 
 ## 2. Add templates and registration
 
@@ -53,9 +52,9 @@ the class. Add template packaging under `[tool.setuptools.package-data]`:
 - Check `list_agents()` includes `nova` and `create_agent({"type": "nova"})` works.
 - Test install/uninstall twice, missing files, and existing unrelated settings.
   Redirect all profile paths to temporary directories.
-- Check the rendered MCP entry and the curation command's argument list.
+- Check the rendered MCP entry.
 - Build a wheel and check that it contains both templates.
-- Try install, curate, and uninstall through `evolva` in a disposable profile.
+- Try install and uninstall through `evolva` in a disposable profile.
 
 The TUI discovers registered agents automatically. The CLI agent handler is
 currently a stub, so do not rely on `evolva set agent` for verification. Run the

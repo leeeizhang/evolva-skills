@@ -1,13 +1,18 @@
 from __future__ import annotations
 
-import shlex
 import sys
 
 import questionary
 from rich.console import Console
 
 from evolva.agents.interface import create_agent, list_agents
-from evolva.config import CONFIG_PATH, load_config, save_config, set_agent_enabled
+from evolva.config import (
+    CONFIG_PATH,
+    load_config,
+    save_config,
+    set_agent_enabled,
+    set_instruction,
+)
 from evolva.storage.interface import create_storage, get_storage_class, list_storages
 
 console = Console()
@@ -28,7 +33,7 @@ def run_tui() -> None:
     while True:
         action = questionary.select(
             "What would you like to do?",
-            choices=["install", "configure", "curate", "uninstall", "exit"],
+            choices=["install", "storage", "instruction", "uninstall", "exit"],
         ).ask()
         if action in (None, "exit"):
             return
@@ -38,8 +43,8 @@ def run_tui() -> None:
                 _manage_agents("install")
             elif action == "uninstall":
                 _manage_agents("uninstall")
-            elif action == "curate":
-                _curate_skills()
+            elif action == "instruction":
+                _configure_instruction()
             else:
                 _configure_storage()
         except (ValueError, RuntimeError, OSError) as error:
@@ -81,33 +86,18 @@ def _manage_agents(action: str) -> None:
         console.print(f"[green]Uninstalled[/green] from [bold]{target}[/bold]")
 
 
-def _curate_skills() -> None:
-    """Refresh an installed integration and print a curation launch command."""
-    config = load_config()
-    if not config.get("storage"):
-        console.print("[yellow]Configure storage before curating skills.[/yellow]")
+def _configure_instruction() -> None:
+    """Edit the custom instruction included in MCP startup guidance."""
+    instruction = questionary.text(
+        "Instruction (leave empty to clear)",
+        default=load_config().get("instruction", ""),
+        multiline=True,
+    ).ask()
+    if instruction is None:
         return
 
-    installed = [name for name in list_agents() if name in config.get("agents", [])]
-    if not installed:
-        console.print(
-            "[yellow]Install an agent integration before curating skills.[/yellow]"
-        )
-        return
-
-    target = questionary.select("Curate with which agent?", choices=installed).ask()
-    if target is None:
-        return
-
-    agent = create_agent({"type": target})
-    agent.install()
-    console.print("Evolva instructions refreshed. Run in a new session:")
-    console.print(
-        shlex.join(agent.curation_command()),
-        markup=False,
-        highlight=False,
-        soft_wrap=True,
-    )
+    set_instruction(instruction)
+    console.print(f"[green]Instruction saved[/green] to {CONFIG_PATH.expanduser()}")
 
 
 def _configure_storage() -> None:
