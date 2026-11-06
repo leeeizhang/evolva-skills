@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=68", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "evolva"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Shared skills and evolving memory for agents."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -22,10 +22,12 @@ dependencies = [
 evolva = "evolva.cli:main"
 
 [project.optional-dependencies]
-dev = ["pre-commit>=3.7", "pytest>=8", "ruff==0.16.8"]
+dev = ["pre-commit>=3.7", "pytest>=8", "ruff==0.16.8", "setuptools-scm>=8"]
 
 [tool.setuptools.packages.find]
 include = ["evolva*"]
+
+[tool.setuptools_scm]
 
 [tool.setuptools.package-data]
 "evolva.agents.codex" = ["*.jinja"]
