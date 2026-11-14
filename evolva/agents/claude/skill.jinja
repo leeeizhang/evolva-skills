@@ -1,6 +1,6 @@
 ---
 name: evolva
-description: Load this skill at the start of every task, before planning or acting, even for familiar work. Evolva is a shared skill library and reusable memory across agents and sessions, including skills absent from your installed catalog. Use it to discover and reuse skills, repair verified defects, capture reusable capabilities, and curate the library when requested.
+description: Evolva is a shared skill library and reusable memory across agents and sessions, including skills absent from your installed catalog. Use it to discover and reuse relevant skills, and to publish worthwhile, verified improvements.
 ---
 
 # Evolva
@@ -8,102 +8,61 @@ description: Load this skill at the start of every task, before planning or acti
 Evolva is a shared skill library and reusable memory across agents and sessions.
 Its MCP catalog includes skills absent from your installed skill list.
 
-## Reuse and repair
+## Workflow
 
-1. At task start, call `list_skills` to discover related capabilities. Read relevant
-   skills even for familiar work. When relevance is uncertain, read the strongest
-   candidate before ruling it out. Use `search_skills` for a known topic,
-   unfamiliar work, a failure, or a blocker before solving from scratch.
-2. `read_skill` returns a local directory path. Open its `SKILL.md`, then only
-   the supporting files needed for the task. Use a fresh task-local directory
-   for each download.
-3. Check instructions against the current environment and observed results.
-   Investigate failed steps, missing prerequisites, and conflicting evidence.
-   Current verified behavior takes precedence.
+Use Evolva through its MCP tools for shared-library operations. Read and edit
+downloaded packages locally, then publish shared changes through MCP.
 
-## Capture reusable work
+- `list_skills`: List the names and descriptions of shared skills.
+- `search_skills`: Find skills by keywords in their names or descriptions.
+- `read_skill`: Download a complete skill package and return its local path.
+- `upsert_skill`: Create or replace an entire shared skill package.
+- `delete_skill`: Remove a shared skill.
 
-During work, look for wrong or missing skill steps, user corrections to reusable
-workflows, successful workarounds, and new capabilities, tool combinations, or
-constraints. Act when useful knowledge is verified; review again before your
-final response, even if no skill was used. Smooth successes count too.
+Discover skills relevant to the task with `list_skills` or `search_skills`.
+Use `read_skill` to download a candidate into a fresh temporary directory
+(for example, under `/tmp`), then open its `SKILL.md` and any supporting files
+needed. Apply the guidance with judgment, checking its assumptions against the
+current environment and evidence.
 
-Publish verified additions or corrections that would improve a future task.
-Knowledge specific to one repository or environment qualifies when its scope and
-prerequisites are clear. A local success alone does not establish a general rule.
-Search first and read likely matches: extend an existing skill for the same
-capability; create a new skill only for a distinct capability. No useful new
-knowledge means no write.
+## Knowledge worth sharing
 
-## Write and publish
+Publishing is optional. Consider sharing knowledge when it offers durable,
+non-obvious insight that would materially help with similar problems.
 
-For updates, download the latest shared package into a fresh directory.
-Apply changes there; preserve useful instructions, scripts, references, templates,
-and assets.
-Exclude generated caches and build outputs.
+- **General enough to reuse.** A new skill should describe a reusable capability,
+  comparable in generality and quality to established skills in the library.
+  Search and read related skills before deciding whether to extend an existing
+  capability or create a distinct one.
+- **Preserve existing scope.** An update should improve a skill without reducing
+  its generality or replacing valid approaches with one task's choices. Keep
+  repository, environment, and version details scoped to their actual conditions;
+  a local success or user correction does not establish a universal rule.
+- **Preserve reusable materials.** Capture the underlying materials discovered
+  during work, along with the context needed to understand and use them. Let the
+  agent decide how to apply and combine these materials for the current task.
+- **Write for human readers.** Explain the background, the problem, and how the
+  approach addresses it in a coherent narrative. Keep the entrypoint concise;
+  link substantial details or resources where they help. Include enough context
+  to understand the skill without this session, avoiding transcripts, temporary
+  task state, secrets, and speculation.
 
-For a new skill, use a short lowercase, hyphenated capability name. Begin
-`SKILL.md` with YAML frontmatter containing `name` and `description`; make `name`
-match the directory name. Describe what the skill does and when to use it.
+When publishing, verify changed claims against current source, authoritative
+documentation, or observed execution. Exercise changed commands or scripts when
+feasible, and make verification limits clear.
 
-Write instructions another agent can follow without this session:
+For updates, download the latest shared package into a fresh temporary directory.
+Preserve useful instructions, scripts, references, templates, and assets.
+For new skills, use a short lowercase, hyphenated name and start `SKILL.md` with
+YAML frontmatter containing `name` and `description`. Match `name` to the directory
+name, and describe the capability and when to use it.
 
-- State the outcome, prerequisites, actionable steps, and relevant checks.
-- Attach failure handling and pitfalls to the steps they affect, with a brief
-  reason.
-- Mark repository, environment, or version limits. Preserve the scope of user
-  corrections; do not turn a task-specific request into a standing rule.
-- Replace incorrect guidance in place and merge duplicate rules.
-- For setup failures, save verified setup or recovery steps, not permanent
-  claims that a tool cannot work.
-- Keep the entrypoint concise. Put detailed subtopics in linked references and
-  state when to read them. Keep separate skills when distinct purposes or
-  triggers make them easier to find independently.
-- Preserve procedures and evidence, not transcripts, temporary task state,
-  one-off details, secrets, sensitive data, trivial observations, or speculation.
+Check frontmatter, relative links, and required files. Exclude generated caches
+and build outputs. Call `upsert_skill` with the complete directory and a short
+change message; it replaces the entire shared package. Confirm publication
+success. If verification or publication is blocked, retain local work and report
+the limitation; local edits alone are not published.
 
-Check changed claims against current source, authoritative documentation, or
-observed execution. Exercise changed commands or scripts when feasible; state
-what was verified and any remaining limits. Do not present unverified guesses
-as working procedures. Check frontmatter, relative links, and required files.
-
-Call `upsert_skill` with the complete directory and a short change message;
-it replaces the entire shared package. Confirm success: local edits alone are
-not published. Complete verified repairs and useful captures before your final
-response. If verification or publication is blocked, retain local work and report
-what remains and why; do not claim it was saved.
-
-Before deleting a confirmed obsolete, invalid, or redundant skill, read its
-contents. Repair knowledge that remains useful. For merges or renames, follow
-the curation workflow below and verify replacements before deleting sources.
-
-## Curate the library
-
-Use this workflow when the user asks to curate, organize, or consolidate the
-library. Keep whole-library reorganization out of unrelated tasks. Follow the
-requested scope; otherwise review the full catalog. Apply the publishing rules
-above.
-
-1. Call `list_skills`. Group candidates by capability and trigger, using names
-   and descriptions as an index. Read candidate packages and inspect supporting
-   files before deciding to rewrite, merge, rename, or delete them.
-2. Identify unclear descriptions, overlapping procedures, conflicting guidance,
-   and broken instructions or links. Verify suspected defects against current
-   evidence. Age or low usage alone does not prove a skill is obsolete. Report
-   unresolved claims instead of inventing corrections.
-3. Improve names, descriptions, and triggers for discovery. Merge only around a
-   coherent capability; distill shared procedures and remove repetition.
-   Keep separate skills when their triggers, prerequisites, or outcomes make
-   them easier to use independently. Organize linked references by reusable
-   topic, not by session or source skill.
-4. Prepare changes from the latest shared packages. Preserve scripts, templates,
-   assets, and useful details. Repair relative paths and references to renamed
-   or merged skills, including links in other affected packages.
-5. Publish destinations with `upsert_skill`. Download each destination into a
-   fresh directory and check its content, file inventory, and links. Before
-   calling `delete_skill` on a source, verify that every useful part has a
-   working destination and affected callers have been updated. A rename is also
-   a publish-then-delete operation. If replacement verification fails, keep
-   the source.
-6. Report what was updated, merged, renamed, or removed, why, and what remains
-   unresolved. If the inventory needs no changes, report that without writing.
+Before deleting a skill, read it and confirm it is obsolete, invalid, or
+redundant. If replacing it, publish and verify the replacement before deleting
+the source.

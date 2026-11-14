@@ -21,24 +21,30 @@ def build_instructions(storage: Storage, instruction: str = "") -> str:
             "Evolva is a shared skill library and reusable memory across agents "
             "and sessions. Its catalog includes skills absent from the agent's "
             "installed skill list.",
-            "At task start, call list_skills to discover related capabilities, "
-            "even for familiar work. When relevance is uncertain, read the "
-            "strongest candidate. Search before unfamiliar work or failure recovery.",
-            "read_skill returns a local directory path: open SKILL.md and needed "
-            "supporting files. Verify instructions against current evidence.",
-            "During work, act on verified skill defects, missing steps, user "
-            "workflow corrections, and reusable new methods; review again before "
-            "your final response even if no skill was used. Smooth successes count.",
-            "Publish verified additions or corrections that improve future tasks "
-            "with upsert_skill. Repository-specific knowledge qualifies; state "
-            "its scope and prerequisites. Preserve the scope of user corrections. "
-            "Search and read likely matches first; extend existing capabilities. "
-            "No useful new knowledge means no write.",
-            "Before updating, read the latest package into a fresh directory. "
-            "upsert_skill replaces the entire package: preserve supporting files. "
-            "Local edits alone are not published. Complete verified repairs and "
-            "useful captures before finishing; report blocked verification or "
-            "publication. Curate the full library only when requested.",
+            "Use Evolva through its MCP tools for shared-library operations. "
+            "Discover relevant skills with list_skills or search_skills. "
+            "read_skill downloads a complete package and returns its local path: "
+            "open SKILL.md and needed supporting files. Apply guidance with "
+            "judgment, checking assumptions against current evidence.",
+            "Publishing is optional. "
+            "Consider sharing durable, non-obvious insight that materially helps "
+            "with similar problems.",
+            "New skills should offer reusable capabilities comparable in "
+            "generality and quality to established skills in the library. Search "
+            "and read related skills before extending one or creating a distinct "
+            "capability. Updates must preserve a skill's generality and valid "
+            "approaches. Keep local constraints and user corrections scoped.",
+            "Preserve reusable materials discovered during work, along with the "
+            "context needed to understand and use them. Let the agent decide how "
+            "to apply and combine these materials for the current task. "
+            "Write for human readers, connecting the background, problem, and "
+            "solution in a coherent narrative.",
+            "When publishing, verify changed claims and read the latest package "
+            "into a fresh temporary directory before updating. upsert_skill replaces the "
+            "entire package: preserve supporting files. Confirm success and "
+            "report blocked verification or publication; local edits alone are "
+            "not published. Before using delete_skill, read the skill and confirm "
+            "it is obsolete, invalid, or redundant; verify any replacement first.",
             f"Skills at connection: {_names(storage)}",
         ]
     )
@@ -97,9 +103,8 @@ class MCPServer:
     def _register_list_skills(self) -> None:
         @self.server.tool(
             description=(
-                "List names and descriptions of all shared skills. Call at task "
-                "start to discover related capabilities, even for familiar work. "
-                "Read the strongest candidate when relevance is uncertain."
+                "List names and descriptions of all shared skills to discover "
+                "capabilities relevant to the current task."
             ),
             annotations=ToolAnnotations(read_only_hint=True),
         )
@@ -111,8 +116,8 @@ class MCPServer:
         @self.server.tool(
             description=(
                 "Match any keyword against skill names or descriptions using "
-                "case-insensitive substrings. Search before solving unfamiliar "
-                "problems or creating a skill; read likely matches."
+                "case-insensitive substrings. Use it to find relevant guidance "
+                "or related capabilities before creating or updating a skill."
             ),
             annotations=ToolAnnotations(read_only_hint=True),
         )
@@ -131,10 +136,8 @@ class MCPServer:
         @self.server.tool(
             description=(
                 "Copy a complete shared skill into a local directory. Returns "
-                "its path: open SKILL.md and needed supporting files. Check for "
-                "wrong or missing steps; publish verified corrections with "
-                "upsert_skill before finishing. Reading alone does not change "
-                "shared memory."
+                "its path: open SKILL.md and needed supporting files locally. "
+                "Check applicability against the current environment and evidence."
             ),
             annotations=ToolAnnotations(read_only_hint=True),
         )
@@ -150,7 +153,7 @@ class MCPServer:
                 str,
                 Field(
                     description=(
-                        "Fresh task-local parent directory for this download. "
+                        "Fresh temporary parent directory, for example under /tmp. "
                         "The Skill is written to <save_dir>/<skill_name>."
                     )
                 ),
@@ -162,13 +165,14 @@ class MCPServer:
     def _register_upsert_skill(self) -> None:
         @self.server.tool(
             description=(
-                "Create or replace an entire shared skill directory. Publish "
-                "verified additions or repairs that improve future tasks, including "
-                "smooth workflows and repository-specific knowledge. State scope "
-                "and prerequisites. Save verified recovery steps, not temporary "
-                "tool unavailability. Search and read likely matches first; extend "
-                "existing capabilities. For updates, read the latest package and "
-                "preserve supporting files."
+                "Create or replace an entire shared skill directory. Publishing "
+                "is optional: use for verified knowledge with durable reuse value. "
+                "New capabilities should be comparable "
+                "in generality and quality to established skills; updates must "
+                "preserve existing scope and valid approaches. Explain the problem "
+                "and reasoning for human readers. Search and read related skills "
+                "first. For updates, read the latest package and preserve all "
+                "supporting files; this replaces the entire package."
             ),
             annotations=ToolAnnotations(
                 destructive_hint=True,
@@ -202,7 +206,7 @@ class MCPServer:
         @self.server.tool(
             description=(
                 "Delete a confirmed obsolete, invalid, or redundant shared "
-                "skill. Read it first; repair knowledge that remains useful. "
+                "skill. Read it first to confirm the removal is appropriate. "
                 "For merges or renames, publish and verify the replacement "
                 "before deleting the source."
             ),
